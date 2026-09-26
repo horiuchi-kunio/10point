@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROJECT: ESP 潜在能力トレーニングスタジオ | 8つの超能力トレーニング</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Shippori+Mincho:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Zen Kaku Gothic New"', 'sans-serif'],
+            serif: ['"Shippori Mincho"', 'serif'],
+            display: ['"Orbitron"', 'sans-serif']
+          },
+          colors: {
+            void: {
+              950: '#06070B',
+              900: '#0B0D14',
+              850: '#10131F',
+              800: '#171B2B',
+              700: '#23293D'
+            },
+            psychic: {
+              cyan: '#00F5FF',
+              enji: '#C01C38',       // 伝統色・臙脂（深紅・バーガンディ）
+              deepEnji: '#7F1D1D',   // 深臙脂（重厚な紅黒）
+              crimson: '#E11D48',
+              amber: '#FFB800',
+              emerald: '#00FFA3'
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'spin-slow': 'spin 20s linear infinite',
+            'radar': 'radarScan 6s linear infinite'
+          },
+          keyframes: {
+            radarScan: {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      background-color: #06070B;
+      color: #E2E8F0;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    .font-orbitron {
+      font-family: 'Orbitron', sans-serif;
+    }
+    /* Cyber Grid Background (臙脂のオーラへ刷新) */
+    .cyber-grid {
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(192, 28, 56, 0.28) 0%, transparent 60%),
+        radial-gradient(circle at 100% 70%, rgba(0, 245, 255, 0.12) 0%, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+    }
+    /* Neon Glow Utilities (臙脂グローへ刷新) */
+    .glow-cyan {
+      box-shadow: 0 0 25px -3px rgba(0, 245, 255, 0.35), 0 0 10px rgba(0, 245, 255, 0.2);
+    }
+    .glow-enji {
+      box-shadow: 0 0 30px -4px rgba(192, 28, 56, 0.55), 0 0 14px rgba(127, 29, 29, 0.35);
+    }
+    .glow-amber {
+      box-shadow: 0 0 25px -3px rgba(255, 184, 0, 0.4);
+    }
+    .text-glow-cyan {
+      text-shadow: 0 0 12px rgba(0, 245, 255, 0.6);
+    }
+    .text-glow-enji {
+      text-shadow: 0 0 14px rgba(225, 29, 72, 0.75);
+    }
+    .text-glow-amber {
+      text-shadow: 0 0 12px rgba(255, 184, 0, 0.6);
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: rgba(16, 19, 31, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-panel-highlight {
+      background: rgba(23, 27, 43, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 245, 255, 0.25);
+    }
+
+    /* Flash awaken effect */
+    @keyframes awakenFlash {
+      0% { opacity: 0; }
+      20% { opacity: 0.9; }
+      100% { opacity: 0; }
+    }
+    .flash-overlay {
+      pointer-events: none;
+      animation: awakenFlash 0.6s ease-out forwards;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0D14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #23293D;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00F5FF;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col cyber-grid text-slate-100 selection:bg-psychic-cyan selection:text-black">
+
+  <!-- Flash Effect Overlay on Awaken -->
+  <div id="awaken-flash" class="fixed inset-0 z-50 bg-white hidden pointer-events-none"></div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-void-950/80 backdrop-blur-xl border-b border-void-700/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-3.5">
+        <div class="relative w-12 h-12 rounded-2xl bg-gradient-to-tr from-psychic-deepEnji via-psychic-enji to-psychic-cyan p-[2px] shadow-lg glow-enji">
+          <div class="w-full h-full bg-void-950 rounded-[14px] flex items-center justify-center text-xl relative overflow-hidden">
+            <span class="relative z-10">🌱</span>
+            <div class="absolute inset-0 bg-psychic-cyan/15 animate-pulse-slow"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-xs text-psychic-cyan tracking-wider">トレーニングスタジオ</span>
+            <span class="text-[9px] px-2 py-0.5 rounded-full bg-psychic-enji/20 text-rose-300 border border-psychic-enji/40 font-bold">実践中</span>
+          </div>
+          <h1 class="text-lg sm:text-xl font-black font-serif tracking-wider text-white drop-shadow-md flex items-center gap-2">
+            8つの超能力トレーニング
+          </h1>
+          <p class="text-[11px] text-slate-400 font-medium hidden sm:block">日々の「思考の癖」を認識し、毎日の極小アクションを「習慣の力」へと昇華させる</p>
+        </div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="flex items-center gap-2.5">
+        <!-- Sound Toggle -->
+        <button id="btn-toggle-sound" class="px-3 py-2 rounded-xl glass-panel text-slate-300 hover:text-psychic-cyan hover:border-psychic-cyan/40 transition text-xs flex items-center gap-1.5 cursor-pointer font-mono" title="効果音の切り替え">
+          <span id="sound-icon">🔊</span>
+          <span class="text-[11px] hidden sm:inline" id="sound-text">音響 ON</span>
+        </button>
+
+        <!-- 6 Foundations Modal Button -->
+        <button id="btn-open-foundations-modal" class="px-3.5 py-2 rounded-xl bg-void-800 hover:bg-void-700 text-slate-200 border border-void-700 hover:border-psychic-amber/50 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm">
+          <span class="text-psychic-amber">❖</span>
+          <span>6つの土台</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main View -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-6">
+
+    <!-- Hero Matrix Banner (Sync Rate & Status) -->
+    <div class="glass-panel-highlight rounded-3xl p-5 sm:p-6 border border-void-700 relative overflow-hidden glow-enji">
+      <div class="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-psychic-deepEnji/30 pointer-events-none blur-3xl"></div>
+      <div class="absolute -left-16 -bottom-16 w-56 h-56 rounded-full bg-psychic-cyan/15 pointer-events-none blur-3xl"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        
+        <!-- Left: Today's Switch (今日のスイッチ) -->
+        <div class="space-y-2 flex-1">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-[11px] tracking-wider px-2.5 py-0.5 rounded-full bg-psychic-amber/15 text-psychic-amber border border-psychic-amber/40">
+              今日のスイッチ
+            </span>
+            <span class="text-xs text-slate-400">気持ちを整える言葉</span>
+          </div>
+          <p id="switch-message" class="text-base sm:text-lg font-serif font-bold text-white leading-relaxed text-glow-amber">
+            「できなかったこと」より、「気づけたこと」を誇れ。それが成長の第一歩だ。
+          </p>
+          <div class="pt-1">
+            <button id="btn-refresh-switch" class="text-[11px] font-bold text-slate-400 hover:text-psychic-cyan transition flex items-center gap-1 cursor-pointer">
+              <span>⚡ 別の言葉に切り替える</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Training Sync Gauge -->
+        <div class="glass-panel p-4 rounded-2xl border border-void-700/80 flex items-center gap-5 shrink-0">
+          <div>
+            <div class="text-[10px] tracking-wider text-slate-400 font-bold">習得度</div>
+            <div class="text-2xl sm:text-3xl font-orbitron font-black text-psychic-cyan flex items-center gap-1 text-glow-cyan">
+              <span id="sync-rate-value">0</span><span class="text-base">%</span>
+            </div>
+            <div class="text-[10px] text-slate-400 font-bold" id="sync-rank-label">ランク: スタート</div>
+          </div>
+          <div class="w-32 space-y-1.5">
+            <div class="flex justify-between text-[10px] text-slate-400 font-bold">
+              <span>習得ゲージ</span>
+              <span id="sync-count-label">0/8</span>
+            </div>
+            <div class="w-full bg-void-950 h-2.5 rounded-full overflow-hidden border border-void-700 p-0.5">
+              <div id="sync-progress-bar" class="h-full bg-gradient-to-r from-psychic-enji via-psychic-cyan to-psychic-emerald w-0 rounded-full transition-all duration-500 shadow-sm"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Navigation Mode Tabs -->
+    <div class="bg-void-900/90 p-1.5 rounded-2xl flex items-center justify-center gap-1.5 text-xs font-bold max-w-lg mx-auto border border-void-700/80 shadow-inner">
+      <button id="tab-btn-today" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-psychic-deepEnji to-psychic-enji text-white shadow-md transition flex items-center justify-center gap-2 cursor-pointer glow-enji">
+        <span class="text-sm">⚡</span>
+        <span>実践トレーニング</span>
+      </button>
+      <button id="tab-btn-catalog" class="flex-1 py-2.5 rounded-xl text-slate-400 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer font-medium">
+        <span class="text-sm">🌌</span>
+        <span>8つの能力一覧</span>
+      </button>
+      <button id="tab-btn-log" class="flex-1 py-2.5 rounded-xl text-slate-400 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer font-medium">
+        <span class="text-sm">📡</span>
+        <span>実践ログ (<span id="tab-log-badge">0</span>)</span>
+      </button>
+    </div>
+
+    <!-- VIEW 1: TODAY TRAINING STAGE -->
+    <div id="view-today" class="space-y-6">
+      
+      <!-- Dynamic Active Training Card -->
+      <div id="active-training-card" class="glass-panel rounded-3xl p-6 sm:p-9 border border-void-700 space-y-7 relative overflow-hidden">
+        <!-- Injected dynamically by renderTodayTraining() -->
+      </div>
+
+      <!-- Philosophy reminder -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 border border-void-700 flex items-start gap-3.5 text-xs sm:text-sm text-slate-300">
+        <span class="text-2xl shrink-0 text-psychic-cyan">✦</span>
+        <div class="space-y-1 leading-relaxed">
+          <strong class="font-bold text-white tracking-wide">超能力トレーニングの本質：</strong>
+          「超能力」とは魔法ではなく、誰もが持っている<strong>思考の癖（認知の偏り）を意図的に乗り越える力</strong>のことです。1日1ミリの意識改革が、常人を超えた知性と実行力を生み出します。
+        </div>
+      </div>
+
+    </div>
+
+    <!-- VIEW 2: 8 POWERS CATALOG -->
+    <div id="view-catalog" class="hidden space-y-6">
+      <div class="text-center max-w-xl mx-auto space-y-2">
+        <h2 class="text-2xl font-black font-serif text-white tracking-wide">8つの超能力（人間力マトリクス）</h2>
+        <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+          あなたが今、最も解放したい力・強化したい思考属性を選択してください。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="catalog-grid">
+        <!-- 8 Cards injected by renderCatalog() -->
+      </div>
+    </div>
+
+    <!-- VIEW 3: TRAINING LOG & TERMINAL -->
+    <div id="view-log" class="hidden space-y-6">
+      <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-void-700 space-y-5">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-void-700">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <span class="w-3 h-3 rounded-full bg-psychic-emerald animate-pulse"></span>
+              <h2 class="text-lg font-bold font-serif text-white">実践アーカイブ（気づきと習慣の記録）</h2>
+              <span id="log-count-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-psychic-cyan/15 text-psychic-cyan border border-psychic-cyan/40 font-bold">0件の記録</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">あなたが獲得した超能力と思考の痕跡がここに蓄積されます</p>
+          </div>
+
+          <div class="flex items-center gap-2 self-start sm:self-auto">
+            <button id="btn-export-log-text" class="px-3.5 py-2 rounded-xl bg-void-800 hover:bg-void-700 text-slate-200 border border-void-700 hover:border-psychic-cyan/50 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+              <span>💾 アーカイブ保存 (.txt)</span>
+            </button>
+            <button id="btn-clear-all-logs" class="px-3 py-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 text-xs transition cursor-pointer">
+              初期化
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs" id="log-filters">
+          <button class="filter-pill px-3.5 py-1.5 rounded-xl bg-psychic-purple text-white font-bold transition cursor-pointer shrink-0" data-filter="all">すべて</button>
+        </div>
+
+        <!-- Logs Container -->
+        <div id="logs-container" class="space-y-3.5 pt-2">
+          <!-- Dynamically injected -->
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: 6 Foundations -->
+  <div id="modal-foundations" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="glass-panel-highlight rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border border-void-700 flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+      
+      <div class="px-6 py-5 border-b border-void-700 flex items-center justify-between bg-void-900/60 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-xl bg-psychic-amber/20 text-psychic-amber flex items-center justify-center font-bold text-sm border border-psychic-amber/40">❖</span>
+          <div>
+            <span class="text-[10px] font-bold text-psychic-amber tracking-wider">基本方針</span>
+            <h3 class="font-serif font-black text-white text-base sm:text-lg">能力発動を支える「6つの土台」</h3>
+          </div>
+        </div>
+        <button id="btn-close-foundations" class="text-slate-400 hover:text-white p-2 rounded-xl transition cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 overflow-y-auto">
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          8つの超能力トレーニングは、以下の「6つの土台」に基づき構成されています。思考が乱れたときは、いつでもこの原則に立ち返ってください。
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="foundations-list">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+
+      <div class="bg-void-950 px-6 py-3.5 border-t border-void-700 flex justify-end shrink-0">
+        <button id="btn-confirm-foundations" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-psychic-deepEnji to-psychic-enji hover:opacity-90 text-white text-xs font-bold tracking-wide transition cursor-pointer shadow-md glow-enji">
+          原則を理解した
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 glass-panel-highlight text-white text-xs px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-psychic-cyan/50 glow-cyan">
+    <span class="text-psychic-cyan text-base">⚡</span>
+    <span id="toast-text" class="font-bold tracking-wide">能力を発動しました</span>
+  </div>
+
+  <script>
+    // 8つの超能力（人間力トレーニング）
+    const POWERS = [
+      {
+        id: 'perspective',
+        no: 1,
+        code: '第1の力',
+        title: '多面的に見る力',
+        codename: '【別の角度から眺める】',
+        icon: '🔭',
+        colorName: 'アンバー',
+        accentColor: '#FFB800',
+        badgeBg: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+        borderClass: 'hover:border-amber-400',
+        gradientClass: 'from-amber-500 to-orange-600',
+        humanHabit: '物事を「白か黒か」「自分から見た1つの角度」だけで決めつけ、視野狭窄に陥る思考の癖。',
+        powerEssence: '他者の視座・未来の視点から立体的に状況を俯瞰し、隠された選択肢を見出す力。',
+        promptTheme: '最近起きた「少し気まずかったこと」「悔しかった出来事」を1つ思い浮かべてください。',
+        inputs: [
+          { key: 'fact', label: '出来事の客観的事実', placeholder: '例：会議で自分の提案がすぐ却下された' },
+          { key: 'perspective_other', label: '相手や周囲の立場から見ると？', placeholder: '例：相手は納期と予算のプレッシャーで焦っていたのかもしれない' },
+          { key: 'perspective_future', label: '1年後の自分から見たら、どんな意味がある？', placeholder: '例：提案のロジックを磨き直す絶好の試練だった' }
+        ],
+        hint: '感情を切り離し、「カメラのアングルを上空50メートルに引き上げる」感覚で記述しましょう。'
+      },
+      {
+        id: 'wisdom',
+        no: 2,
+        code: '第2の力',
+        title: '知識を知恵に変える力',
+        codename: '【行動への翻訳】',
+        icon: '💡',
+        colorName: 'エメラルド',
+        accentColor: '#00FFA3',
+        badgeBg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+        borderClass: 'hover:border-emerald-400',
+        gradientClass: 'from-emerald-500 to-teal-600',
+        humanHabit: '本を読んだり情報を知っただけで「できた気」になり、行動に移さず満足してしまう思考の癖。',
+        powerEssence: '得た知識を「今日できる1ミリの具体アクション」に即座に変換し、生活に定着させる力。',
+        promptTheme: '最近「なるほど！」と感銘を受けた言葉やアイデアを1つ思い出してください。',
+        inputs: [
+          { key: 'knowledge', label: '最近インプットした優れた知識や言葉', placeholder: '例：朝一番に太陽光を浴びるとセロトニンが分泌され集中力が高まる' },
+          { key: 'action', label: '明日試せる「10秒で終わる最小アクション」', placeholder: '例：起きたらカーテンを勢いよく開けて深呼吸を1回する' }
+        ],
+        hint: '壮大な計画は不要です。「バカバカしいほど小さく始める」ことこそが習慣化の核心です。'
+      },
+      {
+        id: 'stacking',
+        no: 3,
+        code: '第3の力',
+        title: '積み重ねる力',
+        codename: '【極小ステップの継続】',
+        icon: '🧱',
+        colorName: 'シアン',
+        accentColor: '#00F5FF',
+        badgeBg: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
+        borderClass: 'hover:border-cyan-400',
+        gradientClass: 'from-cyan-500 to-blue-600',
+        humanHabit: '一気に劇的な成果を出そうとして息切れし、三日坊主で自分を責めて挫折する思考の癖。',
+        powerEssence: '絶対に失敗できない極小ステップを慈しみ、雪だるま式に確かな前進へ育てる力。',
+        promptTheme: 'ずっと身につけたいけれど、途切れがちだった習慣を1つ選んでください。',
+        inputs: [
+          { key: 'goal', label: '身につけたい理想の習慣', placeholder: '例：毎日の読書、運動、英語学習、部屋の片付け' },
+          { key: 'micro_step', label: '「絶対に失敗しようがない」ウルトラ極小ステップ', placeholder: '例：本を1ページだけ開く（読まなくても閉じてOKとする）' }
+        ],
+        hint: '意志の力に頼らず、「ハードルを地べたまで下げる」ことで自然に体が動く状態を作ります。'
+      },
+      {
+        id: 'resourcefulness',
+        no: 4,
+        code: '第4の力',
+        title: 'あるものを活かす力',
+        codename: '【手元の資源の再発見】',
+        icon: '🌾',
+        colorName: 'アンバー',
+        accentColor: '#F59E0B',
+        badgeBg: 'bg-amber-600/20 text-amber-200 border-amber-600/40',
+        borderClass: 'hover:border-amber-400',
+        gradientClass: 'from-amber-600 to-yellow-600',
+        humanHabit: '「あれがない」「お金や時間さえあれば」と無いものねだりをして歩みを止めてしまう思考の癖。',
+        powerEssence: 'すでに自分の周囲・内面にある資源や道具に光を当て、今この場所から最善を創り出す力。',
+        promptTheme: 'いま身の回りにある、当たり前すぎて見落としている「資源」を照らし出しましょう。',
+        inputs: [
+          { key: 'resource_1', label: '今すでに手元にある環境・道具・人脈', placeholder: '例：静かに使える机、スマホ、近所の公園、相談できる知人' },
+          { key: 'resource_2', label: '過去の失敗談や、自分特有の小さな癖', placeholder: '例：心配性であること（＝リスク管理能力が高い）' },
+          { key: 'utilize_idea', label: '今あるものだけを使って今日からできること', placeholder: '例：高額な講座を買わずに、手元のスマホメモで思考整理を5分行う' }
+        ],
+        hint: '不足を数えるのを止め、「手元にある手札でどう進めるか」に焦点を合わせます。'
+      },
+      {
+        id: 'connection',
+        no: 5,
+        code: '第5の力',
+        title: 'つながりを活かす力',
+        codename: '【信頼と感謝の循環】',
+        icon: '🤝',
+        colorName: 'クリムゾン',
+        accentColor: '#FF2E63',
+        badgeBg: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
+        borderClass: 'hover:border-rose-400',
+        gradientClass: 'from-rose-500 to-pink-600',
+        humanHabit: '何でも一人で抱え込み、「人に迷惑をかけてはいけない」と孤立を深めてしまう思考の癖。',
+        powerEssence: '素直に感謝を伝え、適度に他者を頼ることで、一人では到達できない相乗効果を生む力。',
+        promptTheme: 'あなたの周りにいる人や、最近受け取ったさりげない好意を思い出してください。',
+        inputs: [
+          { key: 'gratitude_who', label: '最近ありがたかった人や出来事', placeholder: '例：いつも元気に挨拶してくれる同僚、家族の気遣い' },
+          { key: 'reach_out', label: '小さく感謝を伝える、または頼ってみるなら？', placeholder: '例：「さっきの資料とても助かりました！」とチャットを一言送る' }
+        ],
+        hint: '人に頼ることは、相手を信頼し活躍の場を渡すギフトでもあります。'
+      },
+      {
+        id: 'vision',
+        no: 6,
+        code: '第6の力',
+        title: '未来を描く力',
+        codename: '【北極星を見出す】',
+        icon: '⛵',
+        colorName: 'インディゴ',
+        accentColor: '#6366F1',
+        badgeBg: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40',
+        borderClass: 'hover:border-indigo-400',
+        gradientClass: 'from-indigo-500 to-purple-700',
+        humanHabit: '目先のToDoや日々の不安に追われ、自分が本来どこへ向かいたいのか見失う思考の癖。',
+        powerEssence: '「どんな気分で生きていたいか」という北極星を心に灯し、今日の一歩に確信を与える力。',
+        promptTheme: '1年後、無理のないペースで充実して暮らしている自分を想像してください。',
+        inputs: [
+          { key: 'future_state', label: '1年後、どんな心境・空気感で暮らしていたい？', placeholder: '例：焦りが消え、朝にゆったりと珈琲を味わえる穏やかな心' },
+          { key: 'message_to_now', label: 'その未来の自分から、今の自分へ贈る言葉', placeholder: '例：「焦らなくて大丈夫。今日の小さな積み重ねでちゃんと届くよ」' }
+        ],
+        hint: '数字や肩書きではなく、「どんな呼吸・感情でいたいか」という感覚を鮮明にイメージします。'
+      },
+      {
+        id: 'mindful_time',
+        no: 7,
+        code: '第7の力',
+        title: '時間を大切にする力',
+        codename: '【豊かな余白づくり】',
+        icon: '⏳',
+        colorName: 'ティール',
+        accentColor: '#14B8A6',
+        badgeBg: 'bg-teal-500/20 text-teal-300 border-teal-500/40',
+        borderClass: 'hover:border-teal-400',
+        gradientClass: 'from-teal-500 to-cyan-600',
+        humanHabit: '目的なくスマホを眺めたりして、「なんとなく一日が終わってしまった」と後悔する思考の癖。',
+        powerEssence: '時間の主導権を自分の手に取り戻し、15分の余白を味わい深い宝物に変える力。',
+        promptTheme: '今日（または昨日）の時間の使い方を静かに振り返ってみましょう。',
+        inputs: [
+          { key: 'unconscious_time', label: '思考の癖で流されてしまっていた時間', placeholder: '例：ベッドの中でSNSを目的なくスクロールしていた30分' },
+          { key: 'mindful_slot', label: '明日、自分のために守りたい15分の余白', placeholder: '例：夕方にスマホを別の部屋に置き、窓の外を眺めながらお茶を飲む15分' }
+        ],
+        hint: '過密スケジュールにするのではなく、「何もしない豊かな空白」を守り抜きます。'
+      },
+      {
+        id: 'self_reflection',
+        no: 8,
+        code: '第8の力',
+        title: '自分を疑う力',
+        codename: '【思い込みの手放し】',
+        icon: '🔍',
+        colorName: 'ディープ・エンジ（臙脂）',
+        accentColor: '#C01C38',
+        badgeBg: 'bg-rose-950/60 text-rose-300 border-rose-500/40',
+        borderClass: 'hover:border-rose-400',
+        gradientClass: 'from-red-800 via-rose-700 to-rose-500',
+        humanHabit: '「自分はこういう人間だ」「あの人は敵だ」と決めつけ、自ら可能性を縛り付ける思考の癖。',
+        powerEssence: '自分の固定観念に「本当にそうか？」と優しく問いかけ、心を柔らかく保つ知性。',
+        promptTheme: 'あなたが「絶対にこうでなければならない」と思い込んでいる前提を1つ挙げてください。',
+        inputs: [
+          { key: 'assumption', label: '自分が縛られている「〜すべき」「どうせ無理」', placeholder: '例：人前では常に完璧で、有能に見せなければならない' },
+          { key: 'questioning', label: '「本当にそうかな？」と反転させてみると？', placeholder: '例：弱みを見せた方が周囲と深く信頼し合えることもあるかもしれない' }
+        ],
+        hint: '自分を責めるためではなく、「自分を決めつけの枠から解放する」ための問いかけです。'
+      }
+    ];
+
+    const FOUNDATIONS = [
+      {
+        no: '01',
+        title: '忘れない (Remember)',
+        desc: '人間は必ず忘れる生き物。だからこそ記録を残し、いつでも原点に立ち返るアンカーを打つ。'
+      },
+      {
+        no: '02',
+        title: '繰り返す (Iterate)',
+        desc: '一撃で変わろうとせず、何度でも同じトレーニングに優しく戻ってくることで神経回路を強化する。'
+      },
+      {
+        no: '03',
+        title: '多面的に見る (Multi-Angle)',
+        desc: '善悪の二元論や白黒思考を手放し、あらゆる出来事の別の側面を照らし出す。'
+      },
+      {
+        no: '04',
+        title: '未来を見る (Long-Horizon)',
+        desc: '目先の感情や損得に振り回されず、1年後・10年後の自分が誇らしく思える視座を持つ。'
+      },
+      {
+        no: '05',
+        title: '他者を見る (Empathy Link)',
+        desc: '自分の殻に閉じこもらず、相手の背景や社会の文脈に想像力のアンテナを伸ばす。'
+      },
+      {
+        no: '06',
+        title: '自分を疑う (Self-Paradox)',
+        desc: '「自分の正しさ」に執着せず、柔らかい心で偏見や思い込みを進んで手放す。'
+      }
+    ];
+
+    const SWITCH_QUOTES = [
+      '「できなかったこと」より、「気づけたこと」を誇れ。それが成長の第一歩だ。',
+      '思考の癖を力づくで直そうとするな。「あ、また癖が出ている」と気づくだけで制御権は戻る。',
+      '今日放つ一番小さな1ミリが、未来のあなたを進化させる最大のきっかけ。',
+      '他人との比較を断ち切った瞬間、あなた固有の潜在能力が目を覚ます。',
+      '完璧な継続より、途切れても翌日平然と戻ってこられるしなやかさを誇れ。',
+      'あなたの弱点やコンプレックスは、他者の痛みを感知するための高感度センサーだ。',
+      '焦る必要はない。深海の結晶が静かに育つように、あなたの知性も確実に育っている。',
+      '足りないものを数えるな。手元にある手札こそが、最強の武器になる。',
+      '「本当にそうだろうか？」と一度立ち止まる者だけが、常識の檻を破ることができる。'
+    ];
+
+    let currentPowerIndex = 0;
+    let soundEnabled = true;
+    let userLogs = [];
+    let activeLogFilter = 'all';
+
+    // Tone.js SFX
+    let synth = null;
+    let noiseSynth = null;
+
+    function initAudio() {
+      try {
+        if (!synth && window.Tone) {
+          synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: 'triangle8' },
+            envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.6 }
+          }).toDestination();
+          synth.volume.value = -10;
+        }
+      } catch (e) {
+        console.warn('Tone.js init bypass', e);
+      }
+    }
+
+    function playPsychicSfx(type) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (window.Tone && Tone.context.state !== 'running') {
+          Tone.start();
+        }
+        if (type === 'awaken') {
+          // Epic chord
+          synth.triggerAttackRelease(['C4', 'G4', 'C5', 'E5'], '8n');
+        } else if (type === 'tap') {
+          synth.triggerAttackRelease(['F5'], '32n');
+        } else if (type === 'switch') {
+          synth.triggerAttackRelease(['A4', 'E5'], '16n');
+        }
+      } catch (e) {
+        // audio optional
+      }
+    }
+
+    function renderTodayTraining() {
+      const power = POWERS[currentPowerIndex];
+      const card = document.getElementById('active-training-card');
+
+      card.innerHTML = `
+        <!-- Top Bar: Code & Title -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-void-700">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-void-950 border border-void-700 flex items-center justify-center text-3xl shadow-inner shrink-0 relative group">
+              <span class="relative z-10">${power.icon}</span>
+              <div class="absolute inset-0 rounded-2xl bg-gradient-to-tr ${power.gradientClass} opacity-20 group-hover:opacity-40 transition"></div>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-xs text-psychic-cyan tracking-wider px-2 py-0.5 rounded-md bg-void-950 border border-void-700">${power.code}</span>
+              </div>
+              <h2 class="text-xl sm:text-2xl font-black font-serif text-white mt-1 tracking-wide flex items-center gap-2">
+                <span>${power.title}</span>
+                <span class="text-xs sm:text-sm font-sans font-bold text-psychic-cyan">${power.codename}</span>
+              </h2>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="flex items-center gap-2 self-start sm:self-auto">
+            <button id="btn-shuffle-power" class="px-3.5 py-2 rounded-xl bg-void-800 hover:bg-void-700 text-slate-200 border border-void-700 hover:border-psychic-cyan/50 text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shadow-sm">
+              <span>🎲 別の能力に切替</span>
+            </button>
+            <button id="btn-skip-power" class="px-3 py-2 rounded-xl text-slate-400 hover:text-white text-xs transition cursor-pointer">
+              スキップ
+            </button>
+          </div>
+        </div>
+
+        <!-- Human Habit vs Awakened Power Matrix -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <div class="bg-void-950/80 border border-void-700/80 p-4.5 rounded-2xl space-y-2 relative overflow-hidden">
+            <div class="flex items-center gap-2 text-xs font-bold text-amber-400 font-mono">
+              <span>⚠️</span>
+              <span>思考の癖（責めなくていいこと）</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+              ${power.humanHabit}
+            </p>
+          </div>
+
+          <div class="bg-void-950/80 border border-psychic-cyan/30 p-4.5 rounded-2xl space-y-2 relative overflow-hidden glow-cyan">
+            <div class="flex items-center gap-2 text-xs font-bold text-psychic-cyan font-mono">
+              <span>⚡</span>
+              <span>獲得する超能力</span>
+            </div>
+            <p class="text-xs sm:text-sm text-white leading-relaxed font-medium">
+              ${power.powerEssence}
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Training Work Interactive Area -->
+        <div class="glass-panel-highlight rounded-3xl p-5 sm:p-7 border border-void-700 space-y-5">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-psychic-cyan animate-pulse"></span>
+              <h3 class="text-sm sm:text-base font-bold text-white">
+                ${power.promptTheme}
+              </h3>
+            </div>
+          </div>
+
+          <div class="space-y-4" id="work-inputs-container">
+            ${power.inputs.map((inp, idx) => `
+              <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-300 block flex items-center justify-between">
+                  <span class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-psychic-enji"></span>
+                    <span>${inp.label}</span>
+                  </span>
+                  <span class="text-[10px] text-slate-400 font-bold">ステップ 0${idx + 1}</span>
+                </label>
+                <textarea rows="2" data-key="${inp.key}" placeholder="${inp.placeholder}"
+                  class="work-textarea w-full text-xs sm:text-sm text-white bg-void-950/90 border border-void-700 rounded-2xl p-3.5 focus:outline-none focus:border-psychic-cyan focus:ring-1 focus:ring-psychic-cyan transition resize-none placeholder-slate-500 leading-relaxed font-normal"></textarea>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="p-4 bg-void-950/90 rounded-2xl border border-void-700/80 flex items-start gap-2.5 text-xs text-slate-300">
+            <span class="text-psychic-amber font-bold shrink-0">💡 実践のヒント:</span>
+            <span class="leading-relaxed">${power.hint}</span>
+          </div>
+        </div>
+
+        <!-- Autosave Status Footer -->
+        <div class="flex items-center justify-between pt-2">
+          <span class="text-xs text-slate-400 font-mono flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-psychic-emerald animate-pulse"></span>
+            入力内容はリアルタイムで自動保存されます
+          </span>
+          <span class="text-[11px] text-psychic-cyan font-bold tracking-wider">自動同期中</span>
+        </div>
+      `;
+
+      // 既存の入力データを復元し、リアルタイム自動保存イベントをバインド
+      const existingEntry = userLogs.find(l => l.powerId === power.id);
+      const textareas = card.querySelectorAll('.work-textarea');
+      textareas.forEach(ta => {
+        if (existingEntry && existingEntry.answers && existingEntry.answers[ta.dataset.key]) {
+          ta.value = existingEntry.answers[ta.dataset.key];
+        }
+        ta.addEventListener('input', () => {
+          autoSaveCurrentWork();
+        });
+      });
+
+      // Event bindings
+      document.getElementById('btn-shuffle-power').onclick = () => {
+        playPsychicSfx('switch');
+        currentPowerIndex = (currentPowerIndex + 1) % POWERS.length;
+        renderTodayTraining();
+      };
+
+      document.getElementById('btn-skip-power').onclick = () => {
+        playPsychicSfx('tap');
+        currentPowerIndex = (currentPowerIndex + 1) % POWERS.length;
+        renderTodayTraining();
+        showToast('次のプロトコルへスキップしました');
+      };
+    }
+
+    function autoSaveCurrentWork() {
+      const power = POWERS[currentPowerIndex];
+      const textareas = document.querySelectorAll('#work-inputs-container textarea');
+      const data = {};
+      let hasContent = false;
+
+      textareas.forEach(ta => {
+        const val = ta.value.trim();
+        if (val) hasContent = true;
+        data[ta.dataset.key] = val;
+      });
+
+      // 既存の同能力のログを更新、なければ新規作成
+      const existingIdx = userLogs.findIndex(l => l.powerId === power.id);
+
+      if (hasContent) {
+        const entry = {
+          id: existingIdx >= 0 ? userLogs[existingIdx].id : 'log_' + Date.now(),
+          powerId: power.id,
+          powerCode: power.code,
+          powerTitle: power.title,
+          powerCodename: power.codename,
+          timestamp: new Date().toISOString(),
+          answers: data
+        };
+
+        if (existingIdx >= 0) {
+          userLogs[existingIdx] = entry;
+        } else {
+          userLogs.unshift(entry);
+        }
+      } else {
+        // 全て空欄になった場合はログから除外
+        if (existingIdx >= 0) {
+          userLogs.splice(existingIdx, 1);
+        }
+      }
+
+      saveLogsToStorage();
+      updateSyncMeter();
+      renderLogs();
+    }
+
+    function renderCatalog() {
+      const grid = document.getElementById('catalog-grid');
+      grid.innerHTML = '';
+
+      POWERS.forEach((power, idx) => {
+        const item = document.createElement('div');
+        const isCurrent = idx === currentPowerIndex;
+
+        item.className = `glass-panel rounded-3xl p-5 border transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-3.5 group ${
+          isCurrent 
+            ? 'border-psychic-cyan glow-cyan ring-1 ring-psychic-cyan bg-void-850' 
+            : 'border-void-700 hover:border-psychic-enji/60 hover:-translate-y-1'
+        }`;
+
+        item.innerHTML = `
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-3xl">${power.icon}</span>
+              <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-void-950 text-psychic-cyan border border-void-700">
+                ${power.code}
+              </span>
+            </div>
+            <div>
+              <h3 class="font-serif font-black text-white text-base group-hover:text-psychic-cyan transition">${power.title}</h3>
+              <div class="text-[11px] font-bold text-slate-400 mt-0.5">${power.codename}</div>
+            </div>
+            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+              ${power.powerEssence}
+            </p>
+          </div>
+
+          <div class="pt-3 border-t border-void-700 flex items-center justify-between text-xs">
+            <span class="text-[10px] text-slate-500 font-bold">状態: 実践可能</span>
+            <span class="font-bold text-psychic-cyan group-hover:translate-x-1 transition-transform">選択する →</span>
+          </div>
+        `;
+
+        item.onclick = () => {
+          playPsychicSfx('switch');
+          currentPowerIndex = idx;
+          switchTab('today');
+          renderTodayTraining();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        grid.appendChild(item);
+      });
+    }
+
+    function renderLogs() {
+      const container = document.getElementById('logs-container');
+      const badge = document.getElementById('log-count-badge');
+      const tabBadge = document.getElementById('tab-log-badge');
+
+      badge.textContent = `${userLogs.length}件の記録`;
+      tabBadge.textContent = userLogs.length;
+
+      const filtered = (activeLogFilter === 'all') 
+        ? userLogs 
+        : userLogs.filter(l => l.powerId === activeLogFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 space-y-3 glass-panel rounded-2xl border border-void-700">
+            <span class="text-4xl text-slate-600">📡</span>
+            <div class="text-sm font-bold text-slate-400">まだ実践ログがありません</div>
+            <p class="text-xs text-slate-500">「実践トレーニング」でワークを入力して記録してみましょう。</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(log => {
+        const power = POWERS.find(p => p.id === log.powerId) || POWERS[0];
+        const dateStr = new Date(log.timestamp).toLocaleString('ja-JP', {
+          year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+        });
+
+        const answerItems = Object.entries(log.answers)
+          .filter(([_, v]) => v)
+          .map(([k, val]) => {
+            const inputDef = power.inputs.find(inp => inp.key === k);
+            const label = inputDef ? inputDef.label : k;
+            return `
+              <div class="space-y-1">
+                <span class="text-[11px] font-bold text-slate-400 flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-psychic-cyan"></span>
+                  ${label}
+                </span>
+                <p class="text-xs sm:text-sm text-slate-200 leading-relaxed pl-3 font-normal">${escapeHtml(val)}</p>
+              </div>
+            `;
+          }).join('');
+
+        return `
+          <div class="glass-panel rounded-2xl p-5 border border-void-700 space-y-3 hover:border-psychic-cyan/40 transition">
+            <div class="flex items-center justify-between pb-3 border-b border-void-700">
+              <div class="flex items-center gap-2.5">
+                <span class="text-xl">${power.icon}</span>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-psychic-cyan font-bold">${power.code}</span>
+                    <h4 class="font-serif font-black text-white text-sm">${power.title}</h4>
+                    <span class="text-[10px] text-slate-400 font-bold">${power.codename}</span>
+                  </div>
+                  <span class="text-[10px] text-slate-500 font-mono">${dateStr}</span>
+                </div>
+              </div>
+              <button class="btn-delete-log text-slate-500 hover:text-rose-400 p-1.5 text-xs transition cursor-pointer" data-id="${log.id}" title="削除">
+                ✕
+              </button>
+            </div>
+            <div class="space-y-3 pt-1">
+              ${answerItems}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.querySelectorAll('.btn-delete-log').forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.dataset.id;
+          userLogs = userLogs.filter(l => l.id !== id);
+          saveLogsToStorage();
+          updateSyncMeter();
+          renderLogs();
+          showToast('ログを消去しました');
+        };
+      });
+    }
+
+    function renderLogFilters() {
+      const container = document.getElementById('log-filters');
+      container.innerHTML = `
+        <button class="filter-pill px-3 py-1.5 rounded-xl font-bold transition cursor-pointer shrink-0 text-xs ${
+          activeLogFilter === 'all' 
+            ? 'bg-psychic-enji text-white shadow-sm glow-enji' 
+            : 'bg-void-800 text-slate-400 hover:text-white'
+        }" data-filter="all">すべて</button>
+      `;
+
+      POWERS.forEach(p => {
+        const btn = document.createElement('button');
+        const isActive = activeLogFilter === p.id;
+        btn.className = `filter-pill px-3 py-1.5 rounded-xl font-bold transition cursor-pointer shrink-0 text-xs flex items-center gap-1.5 ${
+          isActive 
+            ? 'bg-psychic-enji text-white shadow-sm glow-enji' 
+            : 'bg-void-800 text-slate-400 hover:text-white'
+        }`;
+        btn.dataset.filter = p.id;
+        btn.innerHTML = `<span>${p.icon}</span><span>${p.title}</span>`;
+        btn.onclick = () => {
+          activeLogFilter = p.id;
+          renderLogFilters();
+          renderLogs();
+        };
+        container.appendChild(btn);
+      });
+
+      container.querySelector('[data-filter="all"]').onclick = () => {
+        activeLogFilter = 'all';
+        renderLogFilters();
+        renderLogs();
+      };
+    }
+
+    function updateSyncMeter() {
+      const uniquePowers = new Set(userLogs.map(l => l.powerId));
+      const count = uniquePowers.size;
+      const rate = Math.round((count / 8) * 100);
+
+      document.getElementById('sync-rate-value').textContent = rate;
+      document.getElementById('sync-progress-bar').style.width = `${rate}%`;
+      document.getElementById('sync-count-label').textContent = `${count}/8`;
+
+      const rankLabel = document.getElementById('sync-rank-label');
+      if (count === 8) {
+        rankLabel.textContent = 'ランク: 完全習得';
+        rankLabel.className = 'text-[10px] text-psychic-emerald font-black';
+      } else if (count >= 5) {
+        rankLabel.textContent = 'ランク: 高位習得';
+        rankLabel.className = 'text-[10px] text-psychic-cyan font-bold';
+      } else if (count >= 2) {
+        rankLabel.textContent = 'ランク: 実践進行中';
+        rankLabel.className = 'text-[10px] text-rose-400 font-bold';
+      } else {
+        rankLabel.textContent = 'ランク: スタート';
+        rankLabel.className = 'text-[10px] text-slate-400 font-bold';
+      }
+    }
+
+    function renderFoundationsModal() {
+      const list = document.getElementById('foundations-list');
+      list.innerHTML = FOUNDATIONS.map(f => `
+        <div class="glass-panel p-4 rounded-2xl border border-void-700 space-y-1.5">
+          <div class="flex items-center gap-2">
+            <span class="font-orbitron font-bold text-xs text-psychic-amber font-mono">${f.no}</span>
+            <h4 class="font-bold text-white text-sm font-serif">${f.title}</h4>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed font-normal">${f.desc}</p>
+        </div>
+      `).join('');
+    }
+
+    function switchTab(tab) {
+      const tabToday = document.getElementById('tab-btn-today');
+      const tabCatalog = document.getElementById('tab-btn-catalog');
+      const tabLog = document.getElementById('tab-btn-log');
+
+      const viewToday = document.getElementById('view-today');
+      const viewCatalog = document.getElementById('view-catalog');
+      const viewLog = document.getElementById('view-log');
+
+      [viewToday, viewCatalog, viewLog].forEach(v => v.classList.add('hidden'));
+      [tabToday, tabCatalog, tabLog].forEach(b => {
+        b.className = 'flex-1 py-2.5 rounded-xl text-slate-400 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer font-medium';
+      });
+
+      if (tab === 'today') {
+        viewToday.classList.remove('hidden');
+        tabToday.className = 'flex-1 py-2.5 rounded-xl bg-gradient-to-r from-psychic-deepEnji to-psychic-enji text-white shadow-md transition flex items-center justify-center gap-2 cursor-pointer font-bold glow-enji';
+      } else if (tab === 'catalog') {
+        viewCatalog.classList.remove('hidden');
+        tabCatalog.className = 'flex-1 py-2.5 rounded-xl bg-gradient-to-r from-psychic-deepEnji to-psychic-enji text-white shadow-md transition flex items-center justify-center gap-2 cursor-pointer font-bold glow-enji';
+        renderCatalog();
+      } else if (tab === 'log') {
+        viewLog.classList.remove('hidden');
+        tabLog.className = 'flex-1 py-2.5 rounded-xl bg-gradient-to-r from-psychic-deepEnji to-psychic-enji text-white shadow-md transition flex items-center justify-center gap-2 cursor-pointer font-bold glow-enji';
+        renderLogs();
+      }
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+    }
+
+    function saveLogsToStorage() {
+      try {
+        localStorage.setItem('esp_training_logs_v2', JSON.stringify(userLogs));
+      } catch (e) {
+        console.warn('Storage save failed', e);
+      }
+    }
+
+    function loadLogsFromStorage() {
+      try {
+        const raw = localStorage.getItem('esp_training_logs_v2');
+        if (raw) {
+          userLogs = JSON.parse(raw);
+        }
+      } catch (e) {
+        console.warn('Storage load failed', e);
+      }
+    }
+
+    function setupEventListeners() {
+      // Tabs
+      document.getElementById('tab-btn-today').onclick = () => { playPsychicSfx('tap'); switchTab('today'); };
+      document.getElementById('tab-btn-catalog').onclick = () => { playPsychicSfx('tap'); switchTab('catalog'); };
+      document.getElementById('tab-btn-log').onclick = () => { playPsychicSfx('tap'); switchTab('log'); };
+
+      // Sound toggle
+      const soundBtn = document.getElementById('btn-toggle-sound');
+      soundBtn.onclick = () => {
+        soundEnabled = !soundEnabled;
+        document.getElementById('sound-icon').textContent = soundEnabled ? '🔊' : '🔇';
+        document.getElementById('sound-text').textContent = soundEnabled ? 'AUDIO ON' : 'AUDIO OFF';
+        showToast(soundEnabled ? '音響エフェクトを有効化しました' : '音響エフェクトをミュートしました');
+      };
+
+      // Foundations modal
+      const modal = document.getElementById('modal-foundations');
+      document.getElementById('btn-open-foundations-modal').onclick = () => {
+        playPsychicSfx('tap');
+        renderFoundationsModal();
+        modal.classList.remove('hidden');
+      };
+      document.getElementById('btn-close-foundations').onclick = () => modal.classList.add('hidden');
+      document.getElementById('btn-confirm-foundations').onclick = () => modal.classList.add('hidden');
+      modal.onclick = (e) => {
+        if (e.target === modal) modal.classList.add('hidden');
+      };
+
+      // Refresh Switch Quote
+      document.getElementById('btn-refresh-switch').onclick = () => {
+        playPsychicSfx('switch');
+        const nextQuote = SWITCH_QUOTES[Math.floor(Math.random() * SWITCH_QUOTES.length)];
+        const msgEl = document.getElementById('switch-message');
+        msgEl.style.opacity = 0;
+        setTimeout(() => {
+          msgEl.textContent = nextQuote;
+          msgEl.style.opacity = 1;
+        }, 150);
+      };
+
+      // Export logs to txt
+      document.getElementById('btn-export-log-text').onclick = () => {
+        if (userLogs.length === 0) {
+          showToast('出力するログがまだありません');
+          return;
+        }
+        let txt = `# PROJECT: ESP 潜在能力トレーニングアーカイブ\n`;
+        txt += `出力日: ${new Date().toLocaleString('ja-JP')}\n`;
+        txt += `記録件数: ${userLogs.length}件\n`;
+        txt += `=========================================\n\n`;
+
+        userLogs.forEach((l, i) => {
+          txt += `【${i + 1}】${l.powerCode} ${l.powerTitle} (${l.powerCodename})\n`;
+          txt += `日時: ${new Date(l.timestamp).toLocaleString('ja-JP')}\n`;
+          Object.entries(l.answers).forEach(([k, v]) => {
+            if (v) txt += `・${k}: ${v}\n`;
+          });
+          txt += `\n-----------------------------------------\n\n`;
+        });
+
+        const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ESP_Training_Log_${new Date().toISOString().slice(0,10)}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('アーカイブファイルを保存しました');
+      };
+
+      // Clear all logs
+      document.getElementById('btn-clear-all-logs').onclick = () => {
+        if (confirm('すべての実践記録を初期化してもよろしいですか？')) {
+          userLogs = [];
+          saveLogsToStorage();
+          updateSyncMeter();
+          renderLogs();
+          showToast('すべての記録を消去しました');
+        }
+      };
+    }
+
+    // Launch
+    window.addEventListener('DOMContentLoaded', () => {
+      loadLogsFromStorage();
+      setupEventListeners();
+      renderTodayTraining();
+      renderLogFilters();
+      updateSyncMeter();
+    });
+  </script>
+</body>
+</html>
